@@ -1,4 +1,3 @@
-import { up } from "migrations/20240727101659_create_user_role";
 import { ReservationMutationResponse, } from "../__generated__/resolvers-types";
 import { ReservationDatastore } from "../datastore/ReservationDatastore.js";
 import { ReservationStatusEnum } from "../datastore/types/Reservation.js";
