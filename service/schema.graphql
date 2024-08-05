@@ -5,6 +5,21 @@ type User {
   phone:String!
 }
 
+type Reservation {
+  reservationId: String!
+  userId: String!
+  status: String!
+  tableSize: Int!
+  arrivalDate: String!
+  arrivalSlot: String!
+  createdAt: String
+  updatedAt: String
+  cancelledAt: String
+  cancelledBy: String
+  completedAt: String
+  completedBy: String
+}
+
 type Query {
   User(email: String): User
 }
@@ -12,9 +27,27 @@ type Query {
 type AddUserMutationResponse{
   success: Boolean!
   message: String
-  user: User
+}
+
+type ReservationMutationResponse{
+  success: Boolean!
+  message: String
+}
+
+input ReservationUpdatedInput{
+  tableSize: Int
+  arrivalDate: String
+  arrivalSlot: String
 }
 
 type Mutation {
-  addUser(email: String, fullName: String, lastName:String, phone: String): AddUserMutationResponse
+  addUser(email: String!, firstName: String!, lastName:String!, phone: String!): AddUserMutationResponse
+
+  makeReservation(userId: String!, tableSize: Int!, arrivalDate: String!, arrivalSlot: String!): ReservationMutationResponse
+
+  cancelReservation(reservationId: String!): ReservationMutationResponse
+
+  updateReservation(reservationId: String!, userId: String!, updatedReservation: ReservationUpdatedInput): ReservationMutationResponse
+
+  completeReservation(reservationId: String!): ReservationMutationResponse
 }

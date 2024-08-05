@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDirs": ["src"],
     "baseUrl": "./src",
-    "outDir": "dist",
+    "outDir": "./dist",
     "lib": ["es2020"],
     "target": "esnext",
     "module": "esnext",
@@ -13,14 +13,14 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
   },
   "include": [
-    "src/**/*.ts",
+    "src",
     "package.json", 
     "src/knexfile.cjs"
   ],
   "exclude": [
     "node_modules",
-    "build"
   ],
 }

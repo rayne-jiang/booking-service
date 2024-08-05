@@ -2,11 +2,26 @@ import { MutationResolvers } from "../__generated__/resolvers-types";
 
 // Use the generated `MutationResolvers` type to type check our mutations!
 const mutations: MutationResolvers = {
-  // Below, we mock adding a new book. Our data set is static for this
-  // example, so we won't actually modify our data.
-//   addBook: async (_, { title, author }, { dataSources }) => {
-//     return dataSources.booksAPI.addBook({ title, author });
-//   },
+  addUser: async (_, args, { UserModel }) => {
+    return await UserModel.addUser(args);
+  },
+
+  //  Modify Reservation
+  makeReservation: async (_, args, { ReservationModel }) => {
+    return await ReservationModel.makeReservation(args.userId, args.tableSize, args.arrivalDate, args.arrivalSlot);
+  },
+
+  cancelReservation: async (_, args, { ReservationModel }) => {
+    return await ReservationModel.cancelReservation(args.reservationId);
+  },
+
+  updateReservation: async (_, args, { ReservationModel }) => {
+    return await ReservationModel.updateReservation(args.reservationId, args.userId, args.updatedReservation);
+  },
+
+  completeReservation: async (_, args, { ReservationModel }) => {
+    return await ReservationModel.completeReservation(args.reservationId);
+  }
 };
 
 export default mutations;

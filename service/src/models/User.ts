@@ -1,39 +1,34 @@
-// import { AddBookMutationResponse, Book } from "../__generated__/resolvers-types";
+import { AddUserMutationResponse, User as UserInput } from "../__generated__/resolvers-types";
+import { UserDatastore } from "../datastore/UserDatastore.js";
+import { UserRoleEnum } from "../datastore/types/User.js";
 
-// const BooksDB: Omit<Required<Book>, "__typename">[] = [
-//     {
-//       title: "The Awakening",
-//       author: "Kate Chopin",
-//     },
-//     {
-//       title: "City of Glass",
-//       author: "Paul Auster",
-//     },
-//   ];
+export class UserModel {
+    private userDB: UserDatastore;
+    constructor() {
+        this.userDB = new UserDatastore();
+    }
 
-export class User {
-    // getBooks(): Book[] {
-    //     // simulate fetching a list of books
-    //     return BooksDB;
-    // }
-    
-    // async addBook(book: Book): Promise<AddBookMutationResponse> {
-    // if (book.title && book.author) {
-    //     BooksDB.push({ title: book.title, author: book.author });
-
-    //     return {
-    //     code: "200",
-    //     success: true,
-    //     message: "New book added!",
-    //     book,
-    //     };
-    // } else {
-    //     return {
-    //     code: "400",
-    //     success: false,
-    //     message: "Invalid input",
-    //     book: null,
-    //     };
-    // }
-    // }
+    async addUser(input: UserInput): Promise<AddUserMutationResponse> {
+        try{
+            const user = {
+                firstName: input.firstName,
+                lastName: input.lastName,
+                email: input.email,
+                phone: input.phone,
+                roleId: UserRoleEnum.GUEST,
+                password: "password",
+            };
+            await this.userDB.addUser(user);
+            return {
+                success: true,
+                message: "New user added!",
+            };
+        } catch (error) {
+            console.error(error);
+            return {
+                success: false,
+                message: `Failed to add user: ${error}`,
+            };
+        }
+    }
 }
