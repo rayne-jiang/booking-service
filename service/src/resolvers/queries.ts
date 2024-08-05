@@ -1,10 +1,17 @@
 import { QueryResolvers } from "__generated__/resolvers-types";
-
+import { UserRoleEnum } from "../datastore/types/User.js";
 
 // Use the generated `QueryResolvers` type to type check our queries!
 const queries: QueryResolvers = {
-  Reservations: async(_, args, { ReservationModel }) => {
-      return await ReservationModel.queryReservations(args.queryParams);
+  Reservations: async(_, args, { ReservationModel, userInfo}) => {
+    const queryParams = args.queryParams || {}; 
+    if(!queryParams.filter) {
+      queryParams.filter = {};
+    }
+    if (userInfo.user?.roleId == UserRoleEnum.GUEST) {
+      queryParams.filter.userId = userInfo.user.userId; // only allow guests to see their own reservations
+    }
+    return await ReservationModel.queryReservations(queryParams);
   },
 
   ReservationDetail: async(_, args, { ReservationModel, UserModel }) => {

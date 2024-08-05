@@ -1,7 +1,7 @@
 import  Knex  from 'knex';
 import type { Knex as KnexType } from 'knex';
 import knexConfig from '../knexConnection.js';
-import { Reservation, ReservationQueryParams } from './types/Reservation.js';
+import { Reservation, ReservationQueryParams, ReservationStatusEnum } from './types/Reservation.js';
 import { v4 as uuid } from 'uuid';
 
 export class ReservationDatastore {
@@ -28,9 +28,6 @@ export class ReservationDatastore {
         .where({ arrivalDate, arrivalSlot, status: 'queued' })
         .orderBy('createdAt', 'asc')
         .first();
-        if (!reservation) {
-            throw new Error("No queued reservation found");
-        }
         return reservation;
     }
 
@@ -42,28 +39,44 @@ export class ReservationDatastore {
         return reservation;
     }
 
-    async queryReservations(queryParams: ReservationQueryParams): Promise<Reservation[]> {
-        const query = this.datastore('reservation');
-        const filters = Object.entries(queryParams)
-        .filter(([_, value]) => value !== undefined)
-        .reduce((acc, [key, value]) => {
-            acc[key] = value;
-            return acc;
-        }, {} as Record<string, any>);
-
-        let filteredQuery = query.where(filters);
-
-        if (queryParams.sortBy) {
-            filteredQuery = filteredQuery.orderBy(queryParams.sortBy.field, queryParams.sortBy.order);
+    async queryReservations({
+        filter = {},
+        sortBy,
+        offset,
+        limit = 100
+      }: ReservationQueryParams): Promise<Reservation[]> {
+        try {
+          const { userId, status, arrivalDate, arrivalSlot } = filter;
+          let query = this.datastore('reservation');
+      
+          if (userId) {
+            query = query.where('userId', userId);
+          }
+          if (status) {
+            const mappedStatus = status.map((s) => s.toLowerCase());
+            query = query.whereIn('status', mappedStatus);
+          }
+          if (arrivalDate) {
+            query = query.where('arrivalDate', arrivalDate);
+          }
+          if (arrivalSlot) {
+            query = query.where('arrivalSlot', arrivalSlot);
+          }
+      
+          if (sortBy) {
+            query = query.orderBy(sortBy.field, sortBy.order);
+          }
+          if (offset !== undefined) {
+            query = query.offset(offset);
+          }
+      
+          query = query.limit(limit);
+      
+          const reservations = await query.select();
+          return reservations;
+        } catch (error) {
+          console.error('Error querying reservations:', error);
+          throw new Error('Failed to query reservations');
         }
-        if (queryParams.offset !== undefined) {
-            filteredQuery = filteredQuery.offset(queryParams.offset);
-        }
-
-        // Default limit to 100 to prevent large queries
-        filteredQuery = filteredQuery.limit(queryParams.limit || 100);
-
-        const reservations = await query.where(filters);
-        return reservations;
     }
 }

@@ -1,6 +1,6 @@
 import { ReservationMutationResponse, } from "../__generated__/resolvers-types";
 import { ReservationDatastore } from "../datastore/ReservationDatastore.js";
-import { ReservationStatusEnum } from "../datastore/types/Reservation.js";
+import { ReservationStatusEnum,ReservationQueryParams } from "../datastore/types/Reservation.js";
 import { checkTableAvailability, updateTableAvailability } from "./helper.js";
 
 export class ReservationModel {
@@ -41,6 +41,12 @@ export class ReservationModel {
     async cancelReservation(reservationId: string): Promise<ReservationMutationResponse> {
         try {
             const reservation = await this.reservationDB.getReservation(reservationId);
+            if (reservation.status === ReservationStatusEnum.CONFIRMED|| reservation.status === ReservationStatusEnum.QUEUED) {
+                return {
+                    success: false,
+                    message: "The reservation is already confirmed or queued, cannot cancel!",
+                };
+            }
             reservation.status = ReservationStatusEnum.CANCELLED;
             reservation.cancelledAt = new Date().toISOString();
             await updateTableAvailability(reservation.tableSize, reservation.arrivalDate, reservation.arrivalSlot, false);
@@ -123,6 +129,9 @@ export class ReservationModel {
     }
 
     async queryReservations(queryParams: any) {
+        if(!queryParams.sortBy){
+            queryParams.sortBy = {field: 'arrivalDate', order: 'desc'}; // default sort by createdAt in descending order
+        }
         return await this.reservationDB.queryReservations(queryParams);
     }
 

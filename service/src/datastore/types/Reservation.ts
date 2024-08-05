@@ -21,10 +21,12 @@ export type Reservation = {
 }
 
 export type ReservationQueryParams = {
-    userId?: string;
-    status?: ReservationStatusEnum;
-    arrivalDate?: string;
-    arrivalSlot?: string;
+    filter?: {
+        userId?: string;
+        status?: [ReservationStatusEnum];
+        arrivalDate?: string;
+        arrivalSlot?: string
+    };    
     limit?: number;
     offset?: number;
     sortBy?: { field: string; order: 'asc' | 'desc' };

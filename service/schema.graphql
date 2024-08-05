@@ -55,11 +55,15 @@ enum SortOrder {
   DESC
 }
 
-input ReservationParamInput {
+input ReservationFilterInput {
   userId: String
-  status: ReservationStatusEnum
+  status: [ReservationStatusEnum]
   arrivalDate: String
   arrivalSlot: String
+}
+
+input ReservationParamInput {
+  filter: ReservationFilterInput
   limit: Int
   offset: Int
   sortBy: SortByInput

@@ -114,6 +114,13 @@ export type ReservationDetailInfo = {
   userId: Scalars['String']['output'];
 };
 
+export type ReservationFilterInput = {
+  arrivalDate?: InputMaybe<Scalars['String']['input']>;
+  arrivalSlot?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Array<InputMaybe<ReservationStatusEnum>>>;
+  userId?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type ReservationMutationResponse = {
   __typename?: 'ReservationMutationResponse';
   message?: Maybe<Scalars['String']['output']>;
@@ -121,13 +128,10 @@ export type ReservationMutationResponse = {
 };
 
 export type ReservationParamInput = {
-  arrivalDate?: InputMaybe<Scalars['String']['input']>;
-  arrivalSlot?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<ReservationFilterInput>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   sortBy?: InputMaybe<SortByInput>;
-  status?: InputMaybe<ReservationStatusEnum>;
-  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum ReservationStatusEnum {
@@ -241,6 +245,7 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   Reservation: ResolverTypeWrapper<Reservation>;
   ReservationDetailInfo: ResolverTypeWrapper<ReservationDetailInfo>;
+  ReservationFilterInput: ReservationFilterInput;
   ReservationMutationResponse: ResolverTypeWrapper<ReservationMutationResponse>;
   ReservationParamInput: ReservationParamInput;
   ReservationStatusEnum: ReservationStatusEnum;
@@ -260,6 +265,7 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   Reservation: Reservation;
   ReservationDetailInfo: ReservationDetailInfo;
+  ReservationFilterInput: ReservationFilterInput;
   ReservationMutationResponse: ReservationMutationResponse;
   ReservationParamInput: ReservationParamInput;
   ReservationUpdatedInput: ReservationUpdatedInput;

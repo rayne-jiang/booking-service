@@ -22,7 +22,7 @@ app.use(cors());
 export interface MyContext {
   UserModel: UserModel;
   ReservationModel: ReservationModel;
-  user?: any;
+  userInfo?: any;
 }
 
 app.post('/login', async (req, res) => {
@@ -55,22 +55,22 @@ const server = new ApolloServer<MyContext>({
 const { url } = await startStandaloneServer(server, {
   context: async ({req}) => {
     const token = req.headers.authorization || '';
-    let user = null;
+    let decodedInfo = null;
 
     if (token) {
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || '');
-        user = decoded;
+        const cleanToken = token.replace('Bearer ', '');
+        decodedInfo = jwt.verify(cleanToken, process.env.JWT_SECRET || '');
       } catch (error) {
-        console.error(error);
+        throw new Error('Invalid token');
       }
     } else {
-      console.error('No token provided');
+      throw new Error('No token provided');
     }
     return {
       UserModel: new UserModel(),
       ReservationModel: new ReservationModel(),
-      user,
+      userInfo: decodedInfo,
     };
   },
 });
