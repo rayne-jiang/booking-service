@@ -67,12 +67,18 @@ export type MutationUpdateReservationArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  User?: Maybe<User>;
+  ReservationDetail?: Maybe<ReservationDetailInfo>;
+  Reservations?: Maybe<Array<Maybe<Reservation>>>;
 };
 
 
-export type QueryUserArgs = {
-  email?: InputMaybe<Scalars['String']['input']>;
+export type QueryReservationDetailArgs = {
+  reservationId: Scalars['String']['input'];
+};
+
+
+export type QueryReservationsArgs = {
+  queryParams?: InputMaybe<ReservationParamInput>;
 };
 
 export type Reservation = {
@@ -91,17 +97,62 @@ export type Reservation = {
   userId: Scalars['String']['output'];
 };
 
+export type ReservationDetailInfo = {
+  __typename?: 'ReservationDetailInfo';
+  arrivalDate: Scalars['String']['output'];
+  arrivalSlot: Scalars['String']['output'];
+  cancelledAt?: Maybe<Scalars['String']['output']>;
+  cancelledBy?: Maybe<Scalars['String']['output']>;
+  completedAt?: Maybe<Scalars['String']['output']>;
+  completedBy?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['String']['output']>;
+  reservationId: Scalars['String']['output'];
+  status: Scalars['String']['output'];
+  tableSize: Scalars['Int']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  user: User;
+  userId: Scalars['String']['output'];
+};
+
 export type ReservationMutationResponse = {
   __typename?: 'ReservationMutationResponse';
   message?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
 };
 
+export type ReservationParamInput = {
+  arrivalDate?: InputMaybe<Scalars['String']['input']>;
+  arrivalSlot?: InputMaybe<Scalars['String']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  sortBy?: InputMaybe<SortByInput>;
+  status?: InputMaybe<ReservationStatusEnum>;
+  userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum ReservationStatusEnum {
+  Cancelled = 'CANCELLED',
+  Completed = 'COMPLETED',
+  Confirmed = 'CONFIRMED',
+  Outdated = 'OUTDATED',
+  Queued = 'QUEUED'
+}
+
 export type ReservationUpdatedInput = {
   arrivalDate?: InputMaybe<Scalars['String']['input']>;
   arrivalSlot?: InputMaybe<Scalars['String']['input']>;
   tableSize?: InputMaybe<Scalars['Int']['input']>;
 };
+
+export type SortByInput = {
+  field: Scalars['String']['input'];
+  order: SortOrder;
+};
+
+export enum SortOrder {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
 
 export type User = {
   __typename?: 'User';
@@ -189,8 +240,13 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Reservation: ResolverTypeWrapper<Reservation>;
+  ReservationDetailInfo: ResolverTypeWrapper<ReservationDetailInfo>;
   ReservationMutationResponse: ResolverTypeWrapper<ReservationMutationResponse>;
+  ReservationParamInput: ReservationParamInput;
+  ReservationStatusEnum: ReservationStatusEnum;
   ReservationUpdatedInput: ReservationUpdatedInput;
+  SortByInput: SortByInput;
+  SortOrder: SortOrder;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   User: ResolverTypeWrapper<User>;
 }>;
@@ -203,8 +259,11 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
   Query: {};
   Reservation: Reservation;
+  ReservationDetailInfo: ReservationDetailInfo;
   ReservationMutationResponse: ReservationMutationResponse;
+  ReservationParamInput: ReservationParamInput;
   ReservationUpdatedInput: ReservationUpdatedInput;
+  SortByInput: SortByInput;
   String: Scalars['String']['output'];
   User: User;
 }>;
@@ -224,7 +283,8 @@ export type MutationResolvers<ContextType = MyContext, ParentType extends Resolv
 }>;
 
 export type QueryResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<QueryUserArgs>>;
+  ReservationDetail?: Resolver<Maybe<ResolversTypes['ReservationDetailInfo']>, ParentType, ContextType, RequireFields<QueryReservationDetailArgs, 'reservationId'>>;
+  Reservations?: Resolver<Maybe<Array<Maybe<ResolversTypes['Reservation']>>>, ParentType, ContextType, Partial<QueryReservationsArgs>>;
 }>;
 
 export type ReservationResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Reservation'] = ResolversParentTypes['Reservation']> = ResolversObject<{
@@ -239,6 +299,23 @@ export type ReservationResolvers<ContextType = MyContext, ParentType extends Res
   status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   tableSize?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ReservationDetailInfoResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['ReservationDetailInfo'] = ResolversParentTypes['ReservationDetailInfo']> = ResolversObject<{
+  arrivalDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  arrivalSlot?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  cancelledAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  cancelledBy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  completedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  completedBy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  reservationId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tableSize?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -262,6 +339,7 @@ export type Resolvers<ContextType = MyContext> = ResolversObject<{
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Reservation?: ReservationResolvers<ContextType>;
+  ReservationDetailInfo?: ReservationDetailInfoResolvers<ContextType>;
   ReservationMutationResponse?: ReservationMutationResponseResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 }>;

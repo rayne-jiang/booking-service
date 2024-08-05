@@ -31,4 +31,8 @@ export class UserModel {
             };
         }
     }
+
+    async getUserById(userId: string) {
+        return await this.userDB.getUserById(userId);
+    }
 }

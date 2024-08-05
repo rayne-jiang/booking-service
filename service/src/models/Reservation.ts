@@ -1,3 +1,4 @@
+import { up } from "migrations/20240727101659_create_user_role";
 import { ReservationMutationResponse, } from "../__generated__/resolvers-types";
 import { ReservationDatastore } from "../datastore/ReservationDatastore.js";
 import { ReservationStatusEnum } from "../datastore/types/Reservation.js";
@@ -42,6 +43,7 @@ export class ReservationModel {
         try {
             const reservation = await this.reservationDB.getReservation(reservationId);
             reservation.status = ReservationStatusEnum.CANCELLED;
+            reservation.cancelledAt = new Date().toISOString();
             await updateTableAvailability(reservation.tableSize, reservation.arrivalDate, reservation.arrivalSlot, false);
 
             const nextQueuedReservation = await this.reservationDB.getNextQueuedReservation(reservation.arrivalDate, reservation.arrivalSlot);
@@ -72,6 +74,7 @@ export class ReservationModel {
                 tableSize: updateReservationInfo.tableSize || reservation.tableSize,
                 arrivalDate: updateReservationInfo.arrivalDate || reservation.arrivalDate,
                 arrivalSlot: updateReservationInfo.arrivalSlot || reservation.arrivalSlot,
+                updatedAt: new Date().toISOString(),
             };
             const newTableAvailable = await checkTableAvailability(updatedReservation.tableSize, updatedReservation.arrivalDate, updatedReservation.arrivalSlot);
             if(!newTableAvailable) {
@@ -102,7 +105,9 @@ export class ReservationModel {
         try {
             const reservation = {
                 reservationId,
-                status: ReservationStatusEnum.COMPLETED
+                status: ReservationStatusEnum.COMPLETED,
+                completedAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
             };
             await this.reservationDB.createAndUpdateReservation(reservation);
             return {
@@ -116,5 +121,13 @@ export class ReservationModel {
                 message: `Failed to complete reservation: ${error}`,
             };
         }
+    }
+
+    async queryReservations(queryParams: any) {
+        return await this.reservationDB.queryReservations(queryParams);
+    }
+
+    async getReservation(reservationId: string) {
+        return await this.reservationDB.getReservation(reservationId);
     }
 }

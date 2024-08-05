@@ -20,10 +20,6 @@ type Reservation {
   completedBy: String
 }
 
-type Query {
-  User(email: String): User
-}
-
 type AddUserMutationResponse{
   success: Boolean!
   message: String
@@ -38,6 +34,57 @@ input ReservationUpdatedInput{
   tableSize: Int
   arrivalDate: String
   arrivalSlot: String
+}
+
+
+enum ReservationStatusEnum {
+  QUEUED
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  OUTDATED
+}
+
+input SortByInput {
+  field: String!
+  order: SortOrder!
+}
+
+enum SortOrder {
+  ASC
+  DESC
+}
+
+input ReservationParamInput {
+  userId: String
+  status: ReservationStatusEnum
+  arrivalDate: String
+  arrivalSlot: String
+  limit: Int
+  offset: Int
+  sortBy: SortByInput
+}
+
+type ReservationDetailInfo {
+  reservationId: String!
+  userId: String!
+  status: String!
+  tableSize: Int!
+  arrivalDate: String!
+  arrivalSlot: String!
+  createdAt: String
+  updatedAt: String
+  cancelledAt: String
+  cancelledBy: String
+  completedAt: String
+  completedBy: String
+  user: User!
+}
+
+type Query {
+  Reservations(queryParams: ReservationParamInput): [Reservation]
+
+  ReservationDetail(reservationId: String!): ReservationDetailInfo
 }
 
 type Mutation {

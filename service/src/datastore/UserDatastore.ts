@@ -19,4 +19,12 @@ export class UserDatastore {
             throw new Error("Failed to add user");
         }
     }
+
+    async getUserById(userId: string): Promise<User> {
+        const user = await this.datastore('user').where({ userId }).first();
+        if (!user) {
+            throw new Error("User not found");
+        }
+        return user;
+    }
 }
