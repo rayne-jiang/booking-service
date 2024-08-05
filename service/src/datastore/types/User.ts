@@ -1,3 +1,8 @@
+export type UserRole = {
+    id: number;
+    roleId: string;
+}
+
 export type User = {
     firstName: string;
     lastName: string;

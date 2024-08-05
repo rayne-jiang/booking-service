@@ -27,4 +27,13 @@ export class UserDatastore {
         }
         return user;
     }
+
+    async getUserByEmail(email: string): Promise<User> {
+        const user = await this.datastore('user').where({ email }).first();
+        if (!user) {
+            throw new Error("User not found");
+        }
+        return user;
+    }
+    
 }

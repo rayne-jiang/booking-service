@@ -35,4 +35,12 @@ export class UserModel {
     async getUserById(userId: string) {
         return await this.userDB.getUserById(userId);
     }
+
+    async authenticateUser(email: string, password: string) {
+        const user = await this.userDB.getUserByEmail(email);
+        if (user.password !== password) {
+            throw new Error("Invalid credentials");
+        }
+        return user;
+    }
 }

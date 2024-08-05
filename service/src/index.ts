@@ -5,17 +5,47 @@ import { ReservationModel } from "./models/Reservation.js";
 import resolvers from "./resolvers/index.js";
 import { readFileSync } from "fs";
 import { config } from 'dotenv';
+import jwt from 'jsonwebtoken';
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 
-// Note: this only works locally because it relies on `npm` routing
-// from the root directory of the project.
+
 const typeDefs = readFileSync("./schema.graphql", { encoding: "utf-8" });
 
 config();
 
+const app = express();
+app.use(bodyParser.json());
+app.use(cors());
+
 export interface MyContext {
   UserModel: UserModel;
   ReservationModel: ReservationModel;
+  user?: any;
 }
+
+app.post('/login', async (req, res) => {
+  try{
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      res.status(400).send('Email and password are required');
+      return res;
+    }
+    const user = await new UserModel().authenticateUser(email, password);
+  
+    if (user) {
+      const token = jwt.sign({ user }, process.env.JWT_SECRET || '', { expiresIn: '1h' });
+      res.json({ token });
+    } else {
+      res.status(401).send('Unauthorized');
+    }
+    return res;
+  }catch(error){
+    res.status(400).send(error);
+  }
+});
 
 const server = new ApolloServer<MyContext>({
   typeDefs,
@@ -23,12 +53,30 @@ const server = new ApolloServer<MyContext>({
 });
 
 const { url } = await startStandaloneServer(server, {
-  context: async () => {
+  context: async ({req}) => {
+    const token = req.headers.authorization || '';
+    let user = null;
+
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || '');
+        user = decoded;
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      console.error('No token provided');
+    }
     return {
       UserModel: new UserModel(),
       ReservationModel: new ReservationModel(),
+      user,
     };
   },
 });
 
 console.log(`🚀 Server listening at: ${url}`);
+
+app.listen(3001, () => {
+  console.log('🚀 REST API listening at: http://localhost:3001');
+});
