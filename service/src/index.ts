@@ -4,10 +4,13 @@ import { UserModel } from "./models/User.js";
 import { ReservationModel } from "./models/Reservation.js";
 import resolvers from "./resolvers/index.js";
 import { readFileSync } from "fs";
+import { config } from 'dotenv';
 
 // Note: this only works locally because it relies on `npm` routing
 // from the root directory of the project.
 const typeDefs = readFileSync("./schema.graphql", { encoding: "utf-8" });
+
+config();
 
 export interface MyContext {
   UserModel: UserModel;

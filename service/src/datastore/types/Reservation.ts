@@ -1,5 +1,3 @@
-import { UUID } from "crypto";
-
 export enum ReservationStatusEnum {
     QUEUED = 'queued',
     CONFIRMED = 'confirmed',
@@ -20,4 +18,14 @@ export type Reservation = {
     confirmedAt: string;
     completedAt: string;
     completedBy: string;
+}
+
+export type ReservationQueryParams = {
+    userId?: string;
+    status?: ReservationStatusEnum;
+    arrivalDate?: string;
+    arrivalSlot?: string;
+    limit?: number;
+    offset?: number;
+    sortBy?: { field: string; order: 'asc' | 'desc' };
 }
