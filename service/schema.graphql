@@ -1,0 +1,20 @@
+type User {
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone:String!
+}
+
+type Query {
+  User(email: String): User
+}
+
+type AddUserMutationResponse{
+  success: Boolean!
+  message: String
+  user: User
+}
+
+type Mutation {
+  addUser(email: String, fullName: String, lastName:String, phone: String): AddUserMutationResponse
+}
