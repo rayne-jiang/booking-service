@@ -14,5 +14,6 @@
         "resolveJsonModule": true,
         "forceConsistentCasingInFileNames": true,
     },
-     "include": ["src/migrations/**/*"]
+     "include": ["src/migrations/**/*", "src/feature/**/*"],
+     "exclude": ["node_modules"]
 }
