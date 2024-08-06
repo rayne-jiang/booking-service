@@ -18,6 +18,8 @@ export class ReservationModel {
                 arrivalSlot,
                 status: ReservationStatusEnum.QUEUED,
                 reservationId,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
             };
             const tableIsAvailable = await checkTableAvailability(tableSize, arrivalDate, arrivalSlot);
             if (tableIsAvailable) {
@@ -41,21 +43,24 @@ export class ReservationModel {
     async cancelReservation(reservationId: string): Promise<ReservationMutationResponse> {
         try {
             const reservation = await this.reservationDB.getReservation(reservationId);
-            if (reservation.status === ReservationStatusEnum.CONFIRMED|| reservation.status === ReservationStatusEnum.QUEUED) {
+            if (reservation.status === ReservationStatusEnum.COMPLETED) {
                 return {
                     success: false,
-                    message: "The reservation is already confirmed or queued, cannot cancel!",
+                    message: "The reservation is already completed, cannot cancel!",
                 };
+            }
+            // For the one that is already confirmed we need to update the table availability, and make the next queued reservation confirmed
+            if (reservation.status === ReservationStatusEnum.CONFIRMED){
+                await updateTableAvailability(reservation.tableSize, reservation.arrivalDate, reservation.arrivalSlot, false);
+
+                const nextQueuedReservation = await this.reservationDB.getNextQueuedReservation(reservation.arrivalDate, reservation.arrivalSlot);
+                // If there is a queued reservation, make it confirmed
+                if (nextQueuedReservation) {
+                    await this.makeReservation(nextQueuedReservation.userId, nextQueuedReservation.tableSize, nextQueuedReservation.arrivalDate, nextQueuedReservation.arrivalSlot, nextQueuedReservation.reservationId);
+                }
             }
             reservation.status = ReservationStatusEnum.CANCELLED;
             reservation.cancelledAt = new Date().toISOString();
-            await updateTableAvailability(reservation.tableSize, reservation.arrivalDate, reservation.arrivalSlot, false);
-
-            const nextQueuedReservation = await this.reservationDB.getNextQueuedReservation(reservation.arrivalDate, reservation.arrivalSlot);
-            // If there is a queued reservation, make it confirmed
-            if (nextQueuedReservation) {
-                await this.makeReservation(nextQueuedReservation.userId, nextQueuedReservation.tableSize, nextQueuedReservation.arrivalDate, nextQueuedReservation.arrivalSlot, nextQueuedReservation.reservationId);
-            }
             await this.reservationDB.createAndUpdateReservation(reservation);
             return {
                 success: true,

@@ -138,10 +138,10 @@ function ReservationDetail() {
           <p>Table Size: {reservation.tableSize}</p>
           <p>Arrival Date: {reservation.arrivalDate}</p>
           <p>Arrival Slot: {reservation.arrivalSlot}</p>
-          <p>Created At: {reservation.createdAt}</p>
+          {/* <p>Created At: {reservation.createdAt}</p>
           <p>Updated At: {reservation.updatedAt}</p>
           <p>Cancelled At: {reservation.cancelledAt}</p>
-          <p>Completed At: {reservation.completedAt}</p>
+          <p>Completed At: {reservation.completedAt}</p> */}
         </div>
         <div className="user-info">
           <h2>User Details</h2>
@@ -192,7 +192,7 @@ function ReservationDetail() {
       {updateLoading && <p>Updating...</p>}
       {updateError && <p>Error: {updateError.message}</p>}
             
-      {(reservation.status !== 'completed') && (userRole !== 1) && (
+      {(reservation.status !== 'completed') && (userRole == 2) && (
       <div>
         <button
           className="complete-button"

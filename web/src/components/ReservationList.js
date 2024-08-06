@@ -110,7 +110,7 @@ const ReservationList = () => {
         >
           Submit
         </Button>
-        {userRole === 1 && (
+        {userRole == 1 && (
           <Button
           type="primary"
           style={{ marginLeft: 8 }}
@@ -159,7 +159,13 @@ const ReservationList = () => {
             label="Table Size"
             rules={[
               { required: true, message: 'Please input table size' },
-              { type: 'number', min: 1, max: 4, message: 'Table size must be between 1 and 4' }
+              { 
+                type: 'number', 
+                min: 1, 
+                max: 4, 
+                message: 'Table size must be between 1 and 4',
+                transform: value => Number(value) // Convert string input to number
+              }
             ]}
           >
             <Input type="number" min={1} max={4} />
