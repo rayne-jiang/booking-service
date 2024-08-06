@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import { DatePicker, Select, Spin, Alert, Button, Modal, Form, Input, message } from 'antd';
 import moment from 'moment';
-import { useNavigate } from 'react-router-dom'; // Use useNavigate for React Router v6
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -39,7 +39,7 @@ const ReservationList = () => {
   const [makeReservation] = useMutation(MAKE_RESERVATION);
   const navigate = useNavigate();
 
-  const user = localStorage.getItem('user');
+  const userRole = localStorage.getItem('userRole');
 
   const handleSubmit = () => {
     const formattedDate = date ? moment(date.toString()).format('YY/MM/DD') : null;
@@ -54,7 +54,7 @@ const ReservationList = () => {
   };
 
   const handleRowClick = (reservationId) => {
-    navigate(`/reservations/${reservationId}`); // Use navigate to handle navigation
+    navigate(`/reservations/${reservationId}`);
   };
 
   const handleMakeReservation = async (values) => {
@@ -110,13 +110,15 @@ const ReservationList = () => {
         >
           Submit
         </Button>
-        <Button
+        {userRole === 1 && (
+          <Button
           type="primary"
           style={{ marginLeft: 8 }}
           onClick={() => setIsModalVisible(true)}
         >
           Make Reservation
-        </Button>
+        </Button>)
+        }
       </div>
       <table style={{ borderCollapse: 'collapse', width: '100%' }}>
         <thead>
@@ -155,16 +157,29 @@ const ReservationList = () => {
           <Form.Item
             name="tableSize"
             label="Table Size"
-            rules={[{ required: true, message: 'Please input table size' }]}
+            rules={[
+              { required: true, message: 'Please input table size' },
+              { type: 'number', min: 1, max: 4, message: 'Table size must be between 1 and 4' }
+            ]}
           >
-            <Input type="number" />
+            <Input type="number" min={1} max={4} />
           </Form.Item>
           <Form.Item
             name="arrivalDate"
             label="Arrival Date"
-            rules={[{ required: true, message: 'Please select arrival date' }]}
+            rules={[
+              { required: true, message: 'Please select arrival date' },
+              () => ({
+                validator(_, value) {
+                  if (!value || value.isAfter(moment(), 'day')) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Arrival date must be after today'));
+                },
+              })
+            ]}
           >
-            <DatePicker />
+            <DatePicker disabledDate={(current) => current && current < moment().endOf('day')} />
           </Form.Item>
           <Form.Item
             name="arrivalSlot"
