@@ -7,8 +7,8 @@ const mutations: MutationResolvers = {
   },
 
   //  Modify Reservation
-  makeReservation: async (_, args, { ReservationModel }) => {
-    return await ReservationModel.makeReservation(args.userId, args.tableSize, args.arrivalDate, args.arrivalSlot);
+  makeReservation: async (_, args, { ReservationModel, userInfo }) => {
+    return await ReservationModel.makeReservation(userInfo.user.userId, args.tableSize, args.arrivalDate, args.arrivalSlot);
   },
 
   cancelReservation: async (_, args, { ReservationModel }) => {

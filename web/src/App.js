@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ApolloAppProvider from './ApolloProvider';
 import Login from './components/Login.js';
 import ReservationList from './components/ReservationList.js';
@@ -8,13 +8,27 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 const App = () => {
   const [token, setToken] = useState(null);
 
-  const handleLoginSuccess = (token) => {
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    const userRole = localStorage.getItem('userRole');
+    if (storedToken) {
+      setToken(storedToken);
+      setUserRole(userRole);
+    }
+  }, []);
+
+  const handleLoginSuccess = (token, userRole) => {
     setToken(token);
+    setUserRole(userRole);
+    localStorage.setItem('token', token);
+    localStorage.setItem('userRole', userRole);
   };
 
   return (
     <Router>
-      <ApolloAppProvider  token={token}>
+      <ApolloAppProvider token={token}>
         <Routes>
           <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
           <Route path="/reservations" element={token ? <ReservationList /> : <Navigate to="/login" />} />

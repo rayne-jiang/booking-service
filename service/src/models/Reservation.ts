@@ -17,7 +17,7 @@ export class ReservationModel {
                 arrivalDate,
                 arrivalSlot,
                 status: ReservationStatusEnum.QUEUED,
-                reservationId
+                reservationId,
             };
             const tableIsAvailable = await checkTableAvailability(tableSize, arrivalDate, arrivalSlot);
             if (tableIsAvailable) {

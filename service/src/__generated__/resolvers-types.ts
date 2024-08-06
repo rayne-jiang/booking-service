@@ -55,7 +55,6 @@ export type MutationMakeReservationArgs = {
   arrivalDate: Scalars['String']['input'];
   arrivalSlot: Scalars['String']['input'];
   tableSize: Scalars['Int']['input'];
-  userId: Scalars['String']['input'];
 };
 
 
@@ -284,7 +283,7 @@ export type MutationResolvers<ContextType = MyContext, ParentType extends Resolv
   addUser?: Resolver<Maybe<ResolversTypes['AddUserMutationResponse']>, ParentType, ContextType, RequireFields<MutationAddUserArgs, 'email' | 'firstName' | 'lastName' | 'phone'>>;
   cancelReservation?: Resolver<Maybe<ResolversTypes['ReservationMutationResponse']>, ParentType, ContextType, RequireFields<MutationCancelReservationArgs, 'reservationId'>>;
   completeReservation?: Resolver<Maybe<ResolversTypes['ReservationMutationResponse']>, ParentType, ContextType, RequireFields<MutationCompleteReservationArgs, 'reservationId'>>;
-  makeReservation?: Resolver<Maybe<ResolversTypes['ReservationMutationResponse']>, ParentType, ContextType, RequireFields<MutationMakeReservationArgs, 'arrivalDate' | 'arrivalSlot' | 'tableSize' | 'userId'>>;
+  makeReservation?: Resolver<Maybe<ResolversTypes['ReservationMutationResponse']>, ParentType, ContextType, RequireFields<MutationMakeReservationArgs, 'arrivalDate' | 'arrivalSlot' | 'tableSize'>>;
   updateReservation?: Resolver<Maybe<ResolversTypes['ReservationMutationResponse']>, ParentType, ContextType, RequireFields<MutationUpdateReservationArgs, 'reservationId' | 'userId'>>;
 }>;
 

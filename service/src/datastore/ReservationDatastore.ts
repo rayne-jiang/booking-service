@@ -13,9 +13,9 @@ export class ReservationDatastore {
     async createAndUpdateReservation(reservation: Partial<Reservation>): Promise<number | number[]> {
         let res = null;
         if (reservation.reservationId) {
-            res = await this.datastore('reservation').where({ reservationId: reservation.reservationId }).update({...reservation, updatedAt: new Date()});
+            res = await this.datastore('reservation').where({ reservationId: reservation.reservationId }).update({...reservation, updatedAt: new Date().toISOString()});
         } else {
-            res = await this.datastore('reservation').insert({reservationId: uuid(), ...reservation, createdAt: new Date(), updatedAt: new Date()});
+            res = await this.datastore('reservation').insert({...reservation, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), reservationId: uuid()});
         }
         if (!res) {
             throw new Error("Failed to create or update reservation");

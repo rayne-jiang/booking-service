@@ -94,7 +94,7 @@ type Query {
 type Mutation {
   addUser(email: String!, firstName: String!, lastName:String!, phone: String!): AddUserMutationResponse
 
-  makeReservation(userId: String!, tableSize: Int!, arrivalDate: String!, arrivalSlot: String!): ReservationMutationResponse
+  makeReservation(tableSize: Int!, arrivalDate: String!, arrivalSlot: String!): ReservationMutationResponse
 
   cancelReservation(reservationId: String!): ReservationMutationResponse
 

@@ -22,7 +22,7 @@ app.use(cors());
 export interface MyContext {
   UserModel: UserModel;
   ReservationModel: ReservationModel;
-  userInfo?: any;
+  userInfo: any;
 }
 
 app.post('/login', async (req, res) => {
@@ -37,7 +37,7 @@ app.post('/login', async (req, res) => {
   
     if (user) {
       const token = jwt.sign({ user }, process.env.JWT_SECRET || '', { expiresIn: '1h' });
-      res.json({ token });
+      res.json({ token, userRole: user.roleId });
     } else {
       res.status(401).send('Unauthorized');
     }

@@ -22,7 +22,7 @@ const Login = ({ onLoginSuccess }) => {
           'Content-Type': 'application/json',
         },
       });
-      onLoginSuccess(response?.data?.token);
+      onLoginSuccess(response?.data?.token, response?.data?.userRole);
       setError(null);
       navigate('/reservations');
     } catch (err) {

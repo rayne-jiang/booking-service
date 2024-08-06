@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import moment from 'moment';
-import './ReservationDetail.css'; // Import the CSS file
+import './ReservationDetail.css';
 
 // Define the GraphQL query
 const GET_RESERVATION_DETAILS = gql`
@@ -50,6 +50,16 @@ const UPDATE_RESERVATION = gql`
   }
 `;
 
+// Define the GraphQL mutation for completing reservation
+const COMPLETE_RESERVATION = gql`
+  mutation CompleteReservation($reservationId: String!) {
+    completeReservation(reservationId: $reservationId) {
+      success
+      message
+    }
+  }
+`;
+
 function ReservationDetail() {
   const { reservationId } = useParams();
   
@@ -62,7 +72,15 @@ function ReservationDetail() {
     refetchQueries: [{ query: GET_RESERVATION_DETAILS, variables: { reservationId } }]
   });
 
-  const [updateReservation] = useMutation(UPDATE_RESERVATION);
+  const [updateReservation, { loading: updateLoading, error: updateError }] = useMutation(UPDATE_RESERVATION,  {
+    variables: { reservationId },
+    refetchQueries: [{ query: GET_RESERVATION_DETAILS, variables: { reservationId } }]
+  });
+
+  const [completeReservation, { loading: completeLoading, error: completeError }] = useMutation(COMPLETE_RESERVATION, {
+    variables: { reservationId },
+    refetchQueries: [{ query: GET_RESERVATION_DETAILS, variables: { reservationId } }]
+  });
 
   // State for the update form
   const [isUpdateFormVisible, setUpdateFormVisible] = useState(false);
@@ -78,10 +96,6 @@ function ReservationDetail() {
   // Get tomorrow's date for the min attribute
   const minDate = moment().add(1, 'day').format('YYYY-MM-DD');
 
-  // Convert a date from 'DD/MM/YY' to 'YYYY-MM-DD'
-  const formatDateForInput = (dateStr) => {
-    return moment(dateStr, 'YYYY-MM-DD').format('YY/MM/DD').toString();
-  };
 
   const handleUpdate = async () => {
     try {
@@ -91,7 +105,7 @@ function ReservationDetail() {
           userId: reservation.userId,
           updatedReservation: {
             tableSize: parseInt(tableSize, 10),
-            arrivalDate: formatDateForInput(arrivalDate),
+            arrivalDate: moment(arrivalDate, 'YYYY-MM-DD').format('YY/MM/DD').toString(),
             arrivalSlot
           }
         }
@@ -101,6 +115,16 @@ function ReservationDetail() {
     } catch (err) {
       console.error('Error updating reservation:', err);
       alert('Failed to update reservation');
+    }
+  };
+
+  const handleComplete = async () => {
+    try {
+      await completeReservation();
+      alert('Reservation completed successfully');
+    } catch (err) {
+      console.error('Error completing reservation:', err);
+      alert('Failed to complete reservation');
     }
   };
 
@@ -129,33 +153,62 @@ function ReservationDetail() {
       {(reservation.status === 'confirmed' || reservation.status === 'queued') && (
         <>
           {/* Cancel Reservation Button */}
-          <button
-            className="cancel-button"
-            onClick={() => {
-              if (window.confirm('Are you sure you want to cancel this reservation?')) {
-                cancelReservation().catch(err => {
-                  console.error('Error cancelling reservation:', err);
-                  alert('Failed to cancel reservation');
-                });
-              }
-            }}
-          >
-            Cancel Reservation
-          </button>
+          <div>
+            <button
+              className="cancel-button"
+              onClick={() => {
+                if (window.confirm('Are you sure you want to cancel this reservation?')) {
+                  cancelReservation().catch(err => {
+                    console.error('Error cancelling reservation:', err);
+                    alert('Failed to cancel reservation');
+                  });
+                }
+              }}
+            >
+              Cancel Reservation
+            </button>
+          </div>
         </>
       )}
-
-      {/* Update Reservation Button */}
-      <button
-        className="update-button"
-        onClick={() => setUpdateFormVisible(true)}
-      >
-        Update
-      </button>
 
       {/* Display loading or error states for cancellation */}
       {cancelLoading && <p>Canceling...</p>}
       {cancelError && <p>Error: {cancelError.message}</p>}
+
+      {(reservation.status !== 'completed') && (
+      <div>
+        <button
+          className="update-button"
+          onClick={() => setUpdateFormVisible(true)}
+        >
+          Update Reservation
+        </button>
+      </div>
+      
+      )}
+
+      {/* Display loading or error states for update */}
+      {updateLoading && <p>Updating...</p>}
+      {updateError && <p>Error: {updateError.message}</p>}
+            
+      {(reservation.status !== 'completed') && (
+      <div>
+        <button
+          className="complete-button"
+          onClick={() => {
+            if (window.confirm('Are you sure you want to complete this reservation?')) {
+              handleComplete();
+            }
+          }}
+        >
+          Complete Reservation
+        </button>
+      </div>
+      )}
+
+      {/* Display loading or error states for completion */}
+      {completeLoading && <p>Completing...</p>}
+      {completeError && <p>Error: {completeError.message}</p>}
 
       {/* Update Form Popup */}
       {isUpdateFormVisible && (
