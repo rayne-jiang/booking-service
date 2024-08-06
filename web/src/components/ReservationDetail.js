@@ -96,6 +96,7 @@ function ReservationDetail() {
   // Get tomorrow's date for the min attribute
   const minDate = moment().add(1, 'day').format('YYYY-MM-DD');
 
+  const userRole = localStorage.getItem('userRole');
 
   const handleUpdate = async () => {
     try {
@@ -191,7 +192,7 @@ function ReservationDetail() {
       {updateLoading && <p>Updating...</p>}
       {updateError && <p>Error: {updateError.message}</p>}
             
-      {(reservation.status !== 'completed') && (
+      {(reservation.status !== 'completed') && (userRole !== 1) && (
       <div>
         <button
           className="complete-button"
