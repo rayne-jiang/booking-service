@@ -8,7 +8,8 @@
     "compile": "npm run generate && tsc",
     "postinstall": "npm run clear && npm run compile",
     "clear": "rm -rf dist",
-    "start": "node ./dist/src/index.js"
+    "start": "node ./dist/src/index.js",
+    "test:unit": "npm run postinstall && mocha ./test/test.js"
   },
   "author": "",
   "license": "ISC",
