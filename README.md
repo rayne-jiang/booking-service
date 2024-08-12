@@ -11,6 +11,7 @@ Welcome to the Booking Service repository. This project includes a backend servi
 - [Starting the Front-End](#starting-the-front-end-)
 - [WOMM](#womm)
 - [WHY USE THESE TECH](#why-tech-stack)
+- [Test Cases](#test-cases)
 
 ## Service Requirements 🔧
 1. **Install Node Version Manager (nvm):**
@@ -120,6 +121,11 @@ BE: sqlite3, knex, express
 - [ ] Add OAuth2 for better security.
 - [ ] Add role based access control for better security in backend.
 
-Failed in adding test cases with cucumber, should do later on.
+## Add BDD Test Cases
+    ```bash
+    cd service/src 
+    npm run test:cucumber
+    ```
+- [ ] Since new to CUCUMBER -> should Add more BDD test cases for to cover all the cases.
 
 There is a lot of things to do, but I think this is a good start.
