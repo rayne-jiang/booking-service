@@ -5,8 +5,8 @@ import { checkTableAvailability, updateTableAvailability } from "./helper.js";
 
 export class ReservationModel {
     private reservationDB: ReservationDatastore;
-    constructor() {
-        this.reservationDB = new ReservationDatastore();
+    constructor(reservationDB?: ReservationDatastore) { 
+        this.reservationDB = reservationDB || new ReservationDatastore();
     }
 
     async makeReservation(userId: string, tableSize: number, arrivalDate: string, arrivalSlot: string, reservationId?: string): Promise<ReservationMutationResponse> {

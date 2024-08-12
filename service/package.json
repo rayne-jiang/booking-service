@@ -16,7 +16,6 @@
   "description": "",
   "dependencies": {
     "@apollo/server": "^4.10.5",
-    "@cucumber/cucumber": "^10.8.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -40,7 +39,9 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^22.1.0",
     "@types/node-cache": "^4.2.5",
+    "@types/sinon": "^17.0.3",
     "@types/uuid": "^10.0.0",
+    "sinon": "^18.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   }

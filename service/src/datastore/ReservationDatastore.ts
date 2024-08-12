@@ -6,8 +6,8 @@ import { v4 as uuid } from 'uuid';
 
 export class ReservationDatastore {
     private datastore: KnexType;
-    constructor() {
-        this.datastore = Knex(knexConfig.development);
+    constructor(knex?: KnexType) {
+        this.datastore = knex || Knex(knexConfig.development);
     }
 
     async createAndUpdateReservation(reservation: Partial<Reservation>): Promise<number | number[]> {

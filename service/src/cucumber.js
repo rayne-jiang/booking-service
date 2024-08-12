@@ -1,11 +1,10 @@
 require('ts-node/register'); 
 
 const common = [
-  'service/src/features/**/*.feature', // Adjust path pattern for feature files
-  '--require-module ts-node/register', // Register ts-node to handle TypeScript
-  '--require src/features/stepDefinitions/**/*.ts', // Path to your step definitions
+  './features/reservation.feature', 
+  '--import ../dist/src/features/stepDefinitions/reservationStepsDefs.js', 
   '--format progress-bar', // Output format
-  `--format-options '{"snippetInterface": "synchronous"}'` // Snippet options
+  `--format-options '{"snippetInterface": "synchronous"}'` 
 ].join(' ');
 
 module.exports = {
