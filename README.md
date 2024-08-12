@@ -122,8 +122,16 @@ BE: sqlite3, knex, express
 - [ ] Add role based access control for better security in backend.
 
 ## Add BDD Test Cases
+To run the Cucumber tests, follow these steps:
+1. Navigate to the directory containing your Cucumber test files:
+
     ```bash
-    cd service/src 
+    cd service/src
+    ```
+
+2. Run the Cucumber tests using the following npm script:
+
+    ```bash
     npm run test:cucumber
     ```
 - [ ] Since new to CUCUMBER -> should Add more BDD test cases for to cover all the cases.
